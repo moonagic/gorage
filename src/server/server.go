@@ -16,7 +16,8 @@ func StartServer(address string, port string) error {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-
+	log.Println(r.Host)
+	fmt.Fprintf(w, "{\"code\": 200, \"msg\": \"Service running...\"}")
 }
 
 func uploadHandle(w http.ResponseWriter, r *http.Request) {
@@ -56,16 +57,16 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 	defer formFile.Close()
 
 	// 创建保存文件
-	destFile, err := os.Create("." + r.URL.Path + "/" + header.Filename)
+	gotFile, err := os.Create("." + r.URL.Path + "/" + header.Filename)
 	if err != nil {
 		log.Printf("Create failed: %s\n", err)
 		fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Create file failed.\"}")
 		return
 	}
-	defer destFile.Close()
+	defer gotFile.Close()
 
 	// 读取表单文件，写入保存文件
-	_, err = io.Copy(destFile, formFile)
+	_, err = io.Copy(gotFile, formFile)
 	if err != nil {
 		log.Printf("Write file failed: %s\n", err)
 		fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Write file failed.\"}")
