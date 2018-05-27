@@ -20,6 +20,7 @@ func LoadConfig() string {
 		return ""
 	}
 
+	var result []byte
 	result, err := ioutil.ReadFile("/etc/imagesStorage/config")
 	if err == nil {
 		var f interface{}
@@ -35,7 +36,7 @@ func LoadConfig() string {
 		}
 		return "Broken config."
 	}
-	return "Can not find config file...in \"/etc/gowebhook/config\""
+	return "Can not find config file...in \"/etc/imagesStorage/config\""
 }
 
 // GetHost 获取监听Host

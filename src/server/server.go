@@ -22,6 +22,10 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 func uploadHandle(w http.ResponseWriter, r *http.Request) {
 
+	if r.Method != "POST" && r.Method != "post" {
+		fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Error Method.\"}")
+		return
+	}
 	// 根据字段名获取表单文件
 	formFile, header, err := r.FormFile("file")
 
