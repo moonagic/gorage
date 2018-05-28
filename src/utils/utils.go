@@ -15,7 +15,7 @@ func CheckoutDir(dir string) error {
 		if err != nil {
 			fmt.Println("Error creating directory", dir)
 			fmt.Println("err:", err)
-			return errors.New(string("Error creating directory"))
+			return errors.New("ERROR CREATING DIRECTORY")
 		}
 	}
 	return nil
