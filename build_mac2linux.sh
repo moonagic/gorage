@@ -1,1 +1,1 @@
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o gowebhook src/main.go
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o imagesStorage src/main.go
