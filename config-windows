@@ -3,6 +3,6 @@
   "host": "127.0.0.1",
   "port": "9909",
   "fileType": "png, jpg, jpeg, webp, bmp, apng, ttf, zip",
-  "storageDir": "images/",
-  "db": "database"
+  "storageDir": "/var/www/",
+  "db": "database",
 }

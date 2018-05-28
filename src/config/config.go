@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"runtime"
+	"strings"
 )
 
 var (
@@ -41,10 +42,16 @@ func LoadConfig() string {
 		json.Unmarshal(result, &f)
 		m := f.(map[string]interface{})
 		localURL, ok1 := m["url"].(string)
+		if !strings.HasSuffix(localURL, "/") {
+			localURL += "/"
+		}
 		localHost, ok2 := m["host"].(string)
 		localPort, ok3 := m["port"].(string)
 		localType, ok4 := m["fileType"].(string)
 		localStorage, ok5 := m["storageDir"].(string)
+		if !strings.HasSuffix(localStorage, "/") {
+			localStorage += "/"
+		}
 		localDB, ok6 := m["db"].(string)
 		if ok1 && ok2 && ok3 && ok4 && ok5 && ok6 {
 			config = make(map[string]string)

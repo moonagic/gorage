@@ -53,7 +53,7 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 	defer formFile.Close()
 
 	// 文件保存dir
-	fileDir := config.GetStorageDir() +
+	fileDir :=
 		fmt.Sprintf("%d", time.Now().Year()) +
 		"/" +
 		fmt.Sprintf("%d", int(time.Now().Month())) +
@@ -61,11 +61,11 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 		fmt.Sprintf("%d", int(time.Now().Day())) +
 		"/"
 
-	if err := utils.CheckoutDir(fileDir); err != nil {
+	if err := utils.CheckoutDir(config.GetStorageDir() + fileDir); err != nil {
 		fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Server error.\"}")
 		return
 	}
-	filePath := fileDir + header.Filename // 文件保存path
+	filePath := config.GetStorageDir() + fileDir + header.Filename // 文件保存path
 	gotFile, err := os.Create(filePath)
 	if err != nil {
 		log.Printf("Create failed: %s\n", err)
@@ -101,7 +101,9 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 		defer db.Close()
 	}
 
-	fmt.Fprintf(w, "{\"code\": 200, \"msg\": \"Upload finished.\", \"data\":%s, \"url\":\"%s/%s\"}", string(mData), config.GetURL(), filePath)
+	url := config.GetURL() + "images/" + fileDir + header.Filename
+	url = strings.Replace(url, "//","/", -1)
+	fmt.Fprintf(w, "{\"code\": 200, \"msg\": \"Upload finished.\", \"data\":%s, \"url\":\"%s\"}", string(mData), url)
 }
 
 func deleteHandle(w http.ResponseWriter, r *http.Request)  {
@@ -161,8 +163,10 @@ func imagesHandle(w http.ResponseWriter, r *http.Request)  {
 		return
 	}
 	// 文件
-	targetFile := config.GetRunningDIR() + r.RequestURI
-	targetFile = strings.Replace(targetFile, "/", "", 1)
+	imagePath := r.RequestURI
+	imagePath = strings.Replace(imagePath, "/images", "", 1)
+	targetFile := config.GetStorageDir() + imagePath
+	targetFile = strings.Replace(targetFile, "//", "/", 1)
 	log.Println(targetFile)
 	if utils.CheckoutIfFileExists(targetFile) {
 		log.Println("file found..")
