@@ -28,7 +28,7 @@ func LoadConfig() string {
 		configFile = ".config"
 		break
 	case "linux":
-		configFile = "/etc/istorage/config"
+		configFile = "/etc/gorage/config"
 		break
 	case "windows":
 		configFile = "config-windows"
@@ -65,7 +65,7 @@ func LoadConfig() string {
 		}
 		return "Broken config."
 	}
-	return "Can not find config file...in \"/etc/istorage/config\""
+	return "Can not find config file...in \"/etc/gorage/config\""
 }
 
 // GetURL 获取URL
