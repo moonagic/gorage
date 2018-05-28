@@ -21,7 +21,7 @@ func LoadConfig() string {
 		configFile = "/etc/imagesStorage/config"
 		break
 	case "windows":
-		configFile = "D:\\goWorkspace\\src\\imagesStorage\\config"
+		configFile = "config-windows"
 		break
 	}
 
@@ -34,11 +34,13 @@ func LoadConfig() string {
 		localHost, ok2 := m["host"].(string)
 		localPort, ok3 := m["port"].(string)
 		localType, ok4 := m["fileType"].(string)
-		if ok2 && ok3 && ok4 {
+		localStorage, ok5 := m["storageDir"].(string)
+		if ok2 && ok3 && ok4 && ok5 {
 			config = make(map[string]string)
 			config["host"] = localHost
 			config["port"] = localPort
 			config["fileType"] = localType
+			config["storageDir"] = localStorage
 			return ""
 		}
 		return "Broken config."
@@ -58,5 +60,10 @@ func GetPort() string {
 
 // GetTypeps 获取可用文件后缀
 func GetTypeps() string {
-	return config["fileType"];
+	return config["fileType"]
+}
+
+// GetStorageDir 获取文件储存目录
+func GetStorageDir() string {
+	return config["storageDir"]
 }
