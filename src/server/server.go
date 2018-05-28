@@ -53,8 +53,7 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 	defer formFile.Close()
 
 	// 文件保存dir
-	fileDir :=
-		fmt.Sprintf("%d", time.Now().Year()) +
+	fileDir := fmt.Sprintf("%d", time.Now().Year()) +
 		"/" +
 		fmt.Sprintf("%d", int(time.Now().Month())) +
 		"/" +
