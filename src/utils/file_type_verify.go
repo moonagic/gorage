@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// Checkout file type
 func VerifyFileType(fileName string) bool {
 	validFileTypes := config.GetTypes()
 

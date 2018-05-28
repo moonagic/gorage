@@ -5,6 +5,7 @@ import (
 	"log"
 )
 
+// PrintAllKeysInDB
 func PrintAllKeysInDB(db *leveldb.DB)  {
 	log.Println("-----------------------")
 	item := db.NewIterator(nil, nil)

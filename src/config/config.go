@@ -11,7 +11,7 @@ var (
 	config map[string]string
 )
 
-// LoadConfig 读取配置文件
+// LoadConfig read config file
 func LoadConfig() string {
 	var configFile string
 	switch runtime.GOOS {
@@ -59,31 +59,31 @@ func LoadConfig() string {
 	return "Can not find config file...in \"/etc/gorage/config\""
 }
 
-// GetURL 获取URL
+// GetURL
 func GetURL() string {
 	return config["url"]
 }
-// GetHost 获取监听Host
+// GetHost
 func GetHost() string {
 	return config["host"]
 }
 
-// GetPort 获取监听port
+// GetPort
 func GetPort() string {
 	return config["port"]
 }
 
-// GetTypes 获取可用文件后缀
+// GetTypes
 func GetTypes() string {
 	return config["fileType"]
 }
 
-// GetStorageDir 获取文件储存目录
+// GetStorageDir
 func GetStorageDir() string {
 	return config["storageDir"]
 }
 
-// GetDataBase 获取数据库文件
+// GetDataBase
 func GetDataBase() string {
 	return config["localDatabase"]
 }

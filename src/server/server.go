@@ -37,7 +37,7 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Error Method.\"}")
 		return
 	}
-	// 根据字段名获取表单文件
+	// get file in form
 	formFile, header, err := r.FormFile("file")
 
 	if !utils.VerifyFileType(header.Filename) {
@@ -52,7 +52,7 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 	}
 	defer formFile.Close()
 
-	// 文件保存dir
+	// storage directory
 	fileDir := fmt.Sprintf("%d", time.Now().Year()) +
 		"/" +
 		fmt.Sprintf("%d", int(time.Now().Month())) +
@@ -110,7 +110,7 @@ func deleteHandle(w http.ResponseWriter, r *http.Request)  {
 		fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Error Method.\"}")
 		return
 	}
-	// 删除处理
+	// Delete
 	if db, err := leveldb.OpenFile(config.GetDataBase(), nil); err != nil {
 		log.Println("Open Database faild.")
 		log.Println(err)
@@ -120,11 +120,11 @@ func deleteHandle(w http.ResponseWriter, r *http.Request)  {
 			json.Unmarshal(bodyContent, &f)
 			bodyMap := f.(map[string]interface{})
 			if key, ok := bodyMap["key"].(string); ok {
-				// 获取当前key对应数据
+				// get value of the key
 				value, err := db.Get([]byte(key), nil)
 				if err == nil {
 					log.Println(string(value))
-					// 删除对应文件
+					// delete file
 					var f interface{}
 					json.Unmarshal(value, &f)
 					valueMap := f.(map[string]interface{})
@@ -140,7 +140,7 @@ func deleteHandle(w http.ResponseWriter, r *http.Request)  {
 					return
 				}
 
-				// 删除数据
+				// delete data
 				log.Println("delte key:", key)
 				err = db.Delete([]byte(key), nil)
 				if err != nil {
@@ -161,7 +161,6 @@ func imagesHandle(w http.ResponseWriter, r *http.Request)  {
 		fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Error Method.\"}")
 		return
 	}
-	// 文件
 	imagePath := r.RequestURI
 	imagePath = strings.Replace(imagePath, "/images", "", 1)
 	targetFile := config.GetStorageDir() + imagePath
