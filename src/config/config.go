@@ -11,15 +11,6 @@ var (
 	config map[string]string
 )
 
-const (
-	RunningDIR = ""
-)
-
-// GetRunningDIR 获取运行目录
-func GetRunningDIR() string {
-	return RunningDIR
-}
-
 // LoadConfig 读取配置文件
 func LoadConfig() string {
 	var configFile string
