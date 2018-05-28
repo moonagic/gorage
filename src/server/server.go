@@ -3,10 +3,10 @@ package server
 import (
 	"net/http"
 	"log"
-	"strings"
 	"fmt"
 	"os"
 	"io"
+	"imagesStorage/src/utils"
 )
 
 func StartServer(address string, port string) error {
@@ -29,26 +29,7 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 	// 根据字段名获取表单文件
 	formFile, header, err := r.FormFile("file")
 
-	validFileType := false
-	if strings.HasSuffix(header.Filename, ".png") {
-		validFileType = true
-	}
-	if strings.HasSuffix(header.Filename, ".jpg") {
-		validFileType = true
-	}
-	if strings.HasSuffix(header.Filename, ".jpeg") {
-		validFileType = true
-	}
-	if strings.HasSuffix(header.Filename, ".bmp") {
-		validFileType = true
-	}
-	if strings.HasSuffix(header.Filename, ".apng") {
-		validFileType = true
-	}
-	if strings.HasSuffix(header.Filename, ".webp") {
-		validFileType = true
-	}
-	if !validFileType {
+	if !utils.VerifyFileType(header.Filename) {
 		fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Invalid file type.\"}")
 		return
 	}

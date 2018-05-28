@@ -12,26 +12,33 @@ var (
 
 // LoadConfig 读取配置文件
 func LoadConfig() string {
-	// 测试环境
-	if runtime.GOOS == "darwin" {
-		config = make(map[string]string)
-		config["host"] = "127.0.0.1"
-		config["port"] = "9090"
-		return ""
+	var configFile string
+	switch runtime.GOOS {
+	case "darwin":
+		configFile = ".config"
+		break
+	case "linux":
+		configFile = "/etc/imagesStorage/config"
+		break
+	case "windows":
+		configFile = "D:\\goWorkspace\\src\\imagesStorage\\config"
+		break
 	}
 
 	var result []byte
-	result, err := ioutil.ReadFile("/etc/imagesStorage/config")
+	result, err := ioutil.ReadFile(configFile)
 	if err == nil {
 		var f interface{}
 		json.Unmarshal(result, &f)
 		m := f.(map[string]interface{})
 		localHost, ok2 := m["host"].(string)
 		localPort, ok3 := m["port"].(string)
-		if ok2 && ok3 {
+		localType, ok4 := m["fileType"].(string)
+		if ok2 && ok3 && ok4 {
 			config = make(map[string]string)
 			config["host"] = localHost
 			config["port"] = localPort
+			config["fileType"] = localType
 			return ""
 		}
 		return "Broken config."
@@ -47,4 +54,9 @@ func GetHost() string {
 // GetPort 获取监听port
 func GetPort() string {
 	return config["port"]
+}
+
+// GetTypeps 获取可用文件后缀
+func GetTypeps() string {
+	return config["fileType"];
 }
