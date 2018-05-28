@@ -4,5 +4,5 @@
   "port": "9909",
   "fileType": "png, jpg, jpeg, webp, bmp, apng, ttf, zip",
   "storageDir": "/var/www/",
-  "db": "database",
+  "db": "database"
 }

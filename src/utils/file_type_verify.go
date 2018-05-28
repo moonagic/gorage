@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"imagesStorage/src/config"
+	"gorage/src/config"
 	"strings"
 )
 

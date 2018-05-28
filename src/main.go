@@ -1,9 +1,9 @@
 package main
 
 import (
-	"imagesStorage/src/server"
+	"gorage/src/server"
 	"log"
-	"imagesStorage/src/config"
+	"gorage/src/config"
 	"os"
 )
 
