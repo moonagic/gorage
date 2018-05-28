@@ -6,7 +6,7 @@ import (
 )
 
 func VerifyFileType(fileName string) bool {
-	validFileTypes := config.GetTypeps()
+	validFileTypes := config.GetTypes()
 
 	types := strings.Split(validFileTypes, ",")
 	for _, value := range types {

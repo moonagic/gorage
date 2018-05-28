@@ -11,6 +11,10 @@ import (
 	"github.com/satori/go.uuid"
 	"imagesStorage/src/config"
 	"time"
+	"imagesStorage/src/data"
+	"encoding/json"
+	"github.com/syndtr/goleveldb/leveldb"
+	"io/ioutil"
 )
 
 func StartServer(address string, port string) error {
@@ -21,8 +25,11 @@ func StartServer(address string, port string) error {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	log.Println(r.Host)
-	fmt.Fprintf(w, "{\"code\": 200, \"msg\": \"Service running...\"}")
+	if r.RequestURI == "/" {
+		fmt.Fprintf(w, "{\"code\": 200, \"msg\": \"Service running...\"}")
+	} else if strings.HasPrefix(r.RequestURI, "/images/") {
+		imagesHandle(w, r)
+	}
 }
 
 func uploadHandle(w http.ResponseWriter, r *http.Request) {
@@ -45,11 +52,15 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 	}
 	defer formFile.Close()
 
-	fileDir := config.GetStorageDir() + fmt.Sprintf("%d", time.Now().Year()) + "/" + fmt.Sprintf("%d", int(time.Now().Month())) + "/" + fmt.Sprintf("%d", int(time.Now().Day())) + "/" // 文件保存dir
-	log.Println(fileDir)
-	log.Println(time.Now().Year())
-	log.Println(int(time.Now().Month()))
-	log.Println(time.Now().Day())
+	// 文件保存dir
+	fileDir := config.GetStorageDir() +
+		fmt.Sprintf("%d", time.Now().Year()) +
+		"/" +
+		fmt.Sprintf("%d", int(time.Now().Month())) +
+		"/" +
+		fmt.Sprintf("%d", int(time.Now().Day())) +
+		"/"
+
 	if err := utils.CheckoutDir(fileDir); err != nil {
 		fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Server error.\"}")
 		return
@@ -70,9 +81,27 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Write file failed.\"}")
 		return
 	}
-	fmt.Fprintf(w, "{\"code\": 200, \"msg\": \"Upload finished.\"}")
 
+	itemUUID := uuid.Must(uuid.NewV4()).String()
 	// 记录上传数据
+	item := data.UploadItem{
+		UUID: itemUUID,
+		FileName: header.Filename,
+		Directory: fileDir,
+	}
+	mData, err := json.Marshal(item)
+	if err != nil{
+		log.Fatalln(err)
+	}
+
+	if db, err := leveldb.OpenFile(config.GetDataBase(), nil); err != nil {
+		log.Println("Open Database faild.")
+	} else {
+		err = db.Put([]byte(itemUUID), mData, nil)
+		defer db.Close()
+	}
+
+	fmt.Fprintf(w, "{\"code\": 200, \"msg\": \"Upload finished.\", \"data\":%s, \"url\":\"%s/%s\"}", string(mData), config.GetURL(), filePath)
 }
 
 func deleteHandle(w http.ResponseWriter, r *http.Request)  {
@@ -81,5 +110,67 @@ func deleteHandle(w http.ResponseWriter, r *http.Request)  {
 		return
 	}
 	// 删除处理
-	log.Println(uuid.Must(uuid.NewV4()))
+	if db, err := leveldb.OpenFile(config.GetDataBase(), nil); err != nil {
+		log.Println("Open Database faild.")
+		log.Println(err)
+	} else {
+		if bodyContent, err := ioutil.ReadAll(r.Body); err == nil {
+			var f interface{}
+			json.Unmarshal(bodyContent, &f)
+			bodyMap := f.(map[string]interface{})
+			if key, ok := bodyMap["key"].(string); ok {
+				// 获取当前key对应数据
+				value, err := db.Get([]byte(key), nil)
+				if err == nil {
+					log.Println(string(value))
+					// 删除对应文件
+					var f interface{}
+					json.Unmarshal(value, &f)
+					valueMap := f.(map[string]interface{})
+					fileDir := valueMap["Directory"].(string)
+					fileName := valueMap["FileName"].(string)
+					if err := os.Remove(fileDir + fileName); err != nil {
+						log.Println("Remove file faild, file:", fileDir + fileName)
+					}
+				} else {
+					log.Println("Not found value by key")
+					fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Not found value by key.\"}")
+					defer db.Close()
+					return
+				}
+
+				// 删除数据
+				log.Println("delte key:", key)
+				err = db.Delete([]byte(key), nil)
+				if err != nil {
+					log.Println(err)
+					fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Delete value faild in database.\"}")
+					defer db.Close()
+					return
+				}
+				fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Delete finished.\"}")
+				defer db.Close()
+			}
+		}
+	}
+}
+
+func imagesHandle(w http.ResponseWriter, r *http.Request)  {
+	if !strings.EqualFold(r.Method, "get") {
+		fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Error Method.\"}")
+		return
+	}
+	// 文件
+	targetFile := config.GetRunningDIR() + r.RequestURI
+	targetFile = strings.Replace(targetFile, "/", "", 1)
+	log.Println(targetFile)
+	if utils.CheckoutIfFileExists(targetFile) {
+		log.Println("file found..")
+		if fileStream, err := ioutil.ReadFile(targetFile); err == nil {
+			w.Write(fileStream)
+		}
+	} else {
+		w.Header().Set("status", "404")
+		fmt.Fprintf(w, "{\"code\": 404, \"error\": \"File not found.\"}")
+	}
 }
