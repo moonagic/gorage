@@ -16,7 +16,7 @@ func LoadConfig() string {
 	var configFile string
 	switch runtime.GOOS {
 	case "darwin":
-		configFile = ".config"
+		configFile = "./config-macintosh"
 		break
 	case "linux":
 		configFile = "/etc/gorage/config"
@@ -56,7 +56,7 @@ func LoadConfig() string {
 		}
 		return "Broken config."
 	}
-	return "Can not find config file...in \"/etc/gorage/config\""
+	return "Can not find config file...in \"" + configFile + "\""
 }
 
 // GetURL
