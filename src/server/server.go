@@ -21,14 +21,17 @@ func StartServer(address string, port string) error {
 	http.HandleFunc("/", index)
 	http.HandleFunc("/upload", uploadHandle)
 	http.HandleFunc("/delete", deleteHandle)
+
+	fs := http.FileServer(http.Dir(config.GetStorageDir()))
+	http.Handle("/images/", http.StripPrefix("/images", fs))
 	return http.ListenAndServe(address + ":" + port, nil)
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	if r.RequestURI == "/" {
+	if r.RequestURI == "/" || r.RequestURI == "/index.html" || r.RequestURI == "/index.htm" {
 		fmt.Fprintf(w, "{\"code\": 200, \"msg\": \"Service running...\"}")
-	} else if strings.HasPrefix(r.RequestURI, "/images/") {
-		imagesHandle(w, r)
+	} else {
+		fmt.Fprintf(w, "{\"code\": 404, \"error\": \"404 Not Found.\"}")
 	}
 }
 
@@ -153,26 +156,5 @@ func deleteHandle(w http.ResponseWriter, r *http.Request)  {
 				defer db.Close()
 			}
 		}
-	}
-}
-
-func imagesHandle(w http.ResponseWriter, r *http.Request)  {
-	if !strings.EqualFold(r.Method, "get") {
-		fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Error Method.\"}")
-		return
-	}
-	imagePath := r.RequestURI
-	imagePath = strings.Replace(imagePath, "/images", "", 1)
-	targetFile := config.GetStorageDir() + imagePath
-	targetFile = strings.Replace(targetFile, "//", "/", 1)
-	log.Println(targetFile)
-	if utils.CheckoutIfFileExists(targetFile) {
-		log.Println("file found..")
-		if fileStream, err := ioutil.ReadFile(targetFile); err == nil {
-			w.Write(fileStream)
-		}
-	} else {
-		w.Header().Set("status", "404")
-		fmt.Fprintf(w, "{\"code\": 404, \"error\": \"File not found.\"}")
 	}
 }
