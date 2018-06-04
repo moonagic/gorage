@@ -61,12 +61,12 @@ func parseArgs() bool {
 }
 
 func printVersion() {
-	fmt.Print("version:")
 	c := color.New(color.FgGreen)
-	c.Println(version)
+	c.Print("version:")
+	fmt.Println(version)
 
-	fmt.Print("build:")
-	c.Println(buildVersion)
+	c.Println("build:")
+	fmt.Println(buildVersion)
 }
 
 func printHelp() {
