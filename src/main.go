@@ -65,7 +65,7 @@ func printVersion() {
 	c.Print("version:")
 	fmt.Println(version)
 
-	c.Println("build:")
+	c.Print("build:")
 	fmt.Println(buildVersion)
 }
 
