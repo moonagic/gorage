@@ -103,7 +103,7 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 		defer db.Close()
 	}
 
-	url := config.GetURL() + "images/" + fileDir + header.Filename
+	url := config.GetURL() + "content/" + fileDir + header.Filename
 	url = strings.Replace(url, "//","/", -1)
 	fmt.Fprintf(w, "{\"code\": 200, \"msg\": \"Upload finished.\", \"data\":%s, \"url\":\"%s\"}", string(mData), url)
 }
