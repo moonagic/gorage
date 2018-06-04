@@ -8,15 +8,15 @@ import (
 	"fmt"
 	"github.com/syndtr/goleveldb/leveldb"
 	"encoding/json"
+	"github.com/fatih/color"
 )
 
 const (
-	version = 0.1
-	buildVersion = 100
+	version = "0.1"
+	buildVersion = "102"
 )
 
 func main() {
-
 	if err := config.LoadConfig(); err != "" {
 		log.Fatal(err)
 		os.Exit(0)
@@ -61,8 +61,12 @@ func parseArgs() bool {
 }
 
 func printVersion() {
-	fmt.Println("gorage version" , version)
-	fmt.Println("build:" , buildVersion)
+	fmt.Print("version:")
+	c := color.New(color.FgGreen)
+	c.Println(version)
+
+	fmt.Print("build:")
+	c.Println(buildVersion)
 }
 
 func printHelp() {
@@ -70,9 +74,8 @@ func printHelp() {
 }
 
 func deleteTarget(target []string) {
-	fmt.Println("delete target", target)
 	if db, err := leveldb.OpenFile(config.GetDataBase(), nil); err != nil {
-		log.Println("Open Database faild.")
+		color.Red("Error in Open Database.")
 	} else {
 		for _, key := range target {
 			value, err := db.Get([]byte(key), nil)
@@ -84,8 +87,8 @@ func deleteTarget(target []string) {
 				valueMap := f.(map[string]interface{})
 				fileDir := valueMap["Directory"].(string)
 				fileName := valueMap["FileName"].(string)
-				if err := os.Remove(fileDir + fileName); err != nil {
-					log.Println("Remove file faild")
+				if err := os.Remove(config.GetStorageDir() + fileDir + fileName); err != nil {
+					color.Red("Error in remove file: %s", config.GetStorageDir() + fileDir + fileName)
 					log.Println("file:", fileDir + fileName)
 					log.Println("key:", key)
 				} else {
@@ -93,13 +96,16 @@ func deleteTarget(target []string) {
 					log.Println("file:", fileDir + fileName)
 					log.Println("key:", key)
 				}
-			} else {
-				log.Println("Not found value by key", key)
-			}
 
-			// delete data
-			log.Println("delte key:", key)
-			err = db.Delete([]byte(key), nil)
+				// delete data
+				log.Println("delte value by key:", key)
+				err = db.Delete([]byte(key), nil)
+				if err != nil {
+					color.Red("Error in delete value by key!")
+				}
+			} else {
+				color.Red("Not found value by key:%s", key)
+			}
 		}
 		defer db.Close()
 	}
@@ -107,17 +113,27 @@ func deleteTarget(target []string) {
 
 func printItemsList() {
 	if db, err := leveldb.OpenFile(config.GetDataBase(), nil); err != nil {
-		log.Println("Open Database faild.")
+		color.Red("Error in Open Database.")
 	} else {
 		item := db.NewIterator(nil, nil)
+		color.Blue("--------------------")
 		for item.Next() {
-			// Remember that the contents of the returned slice should not be modified, and
-			// only valid until the next call to Next.
 			value := item.Value()
-			fmt.Println(string(value))
+			var f interface{}
+			json.Unmarshal(value, &f)
+			bodyMap := f.(map[string]interface{})
+			color.Green("UUID:%s", bodyMap["UUID"].(string))
+			color.White("FileName:%s", bodyMap["FileName"].(string))
+			color.White("Directory:%s", bodyMap["Directory"].(string))
+			color.White("URL:%s", config.GetURL() + "content/" + bodyMap["Directory"].(string) + bodyMap["FileName"].(string))
+
+			color.Blue("--------------------")
 		}
 		item.Release()
 		err = item.Error()
+		if err != nil {
+			color.Red("Parse error")
+		}
 		defer db.Close()
 	}
 }
