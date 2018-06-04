@@ -50,7 +50,7 @@ func parseArgs() bool {
 		case "list":
 			printItemsList()
 		case "delete":
-			deleteTarget(os.Args[:2])
+			deleteTarget(os.Args[2:])
 		case "start":
 			return true
 		}
