@@ -6,6 +6,8 @@ import (
 	"gorage/src/server"
 	"gorage/src/config"
 	"fmt"
+	"github.com/syndtr/goleveldb/leveldb"
+	"encoding/json"
 )
 
 const (
@@ -15,11 +17,11 @@ const (
 
 func main() {
 
+	if err := config.LoadConfig(); err != "" {
+		log.Fatal(err)
+		os.Exit(0)
+	}
 	if parseArgs() {
-		if err := config.LoadConfig(); err != "" {
-			log.Fatal(err)
-			os.Exit(0)
-		}
 		log.Fatal(server.StartServer(config.GetHost(), config.GetPort()))
 	}
 
@@ -69,8 +71,53 @@ func printHelp() {
 
 func deleteTarget(target []string) {
 	fmt.Println("delete target", target)
+	if db, err := leveldb.OpenFile(config.GetDataBase(), nil); err != nil {
+		log.Println("Open Database faild.")
+	} else {
+		for _, key := range target {
+			value, err := db.Get([]byte(key), nil)
+			if err == nil {
+				log.Println(string(value))
+				// delete file
+				var f interface{}
+				json.Unmarshal(value, &f)
+				valueMap := f.(map[string]interface{})
+				fileDir := valueMap["Directory"].(string)
+				fileName := valueMap["FileName"].(string)
+				if err := os.Remove(fileDir + fileName); err != nil {
+					log.Println("Remove file faild")
+					log.Println("file:", fileDir + fileName)
+					log.Println("key:", key)
+				} else {
+					log.Println("Remove file finished.")
+					log.Println("file:", fileDir + fileName)
+					log.Println("key:", key)
+				}
+			} else {
+				log.Println("Not found value by key", key)
+			}
+
+			// delete data
+			log.Println("delte key:", key)
+			err = db.Delete([]byte(key), nil)
+		}
+		defer db.Close()
+	}
 }
 
 func printItemsList() {
-	fmt.Println("printItemsList")
+	if db, err := leveldb.OpenFile(config.GetDataBase(), nil); err != nil {
+		log.Println("Open Database faild.")
+	} else {
+		item := db.NewIterator(nil, nil)
+		for item.Next() {
+			// Remember that the contents of the returned slice should not be modified, and
+			// only valid until the next call to Next.
+			value := item.Value()
+			fmt.Println(string(value))
+		}
+		item.Release()
+		err = item.Error()
+		defer db.Close()
+	}
 }
