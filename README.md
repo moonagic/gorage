@@ -1,2 +1,2 @@
 # gorage
-A image hosting tool written by golang.
+An image hosting tool written by golang.
