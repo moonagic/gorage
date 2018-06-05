@@ -10,7 +10,6 @@ import (
 	"github.com/fatih/color"
 	"sort"
 	"strconv"
-	"log"
 )
 
 var (
@@ -98,17 +97,7 @@ func LoadKeyCache() {
 		}
 		defer db.Close()
 	}
-	log.Println("排序前")
-	for i := 0; i < len(KeyCacheArray);i++ {
-		log.Println(KeyCacheArray[i].TagTime)
-	}
 	sort.Sort(KeyCacheArray)
-
-
-	log.Println("排序后")
-	for i := 0; i < len(KeyCacheArray);i++ {
-		log.Println(KeyCacheArray[i].TagTime)
-	}
 }
 
 // GetURL
