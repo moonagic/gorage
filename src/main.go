@@ -29,28 +29,19 @@ func main() {
 func parseArgs() bool {
 	if len(os.Args) > 1 {
 		arg := os.Args[1]
-		switch arg {
-		case "help":
+		if arg == "help" || arg == "-h" || arg == "-help" {
 			printHelp()
-		case "-h":
-			printHelp()
-		case "-help":
-			printHelp()
-		case "-v":
+		}
+		if arg == "-v" || arg == "-V" || arg == "-version" || arg == "version" {
 			printVersion()
-		case "-V":
-			printVersion()
-		case "-version":
-			printVersion()
-		case "--version":
-			printVersion()
-		case "version":
-			printVersion()
-		case "list":
+		}
+		if arg == "-l" || arg == "list" || arg == "-list" {
 			printItemsList()
-		case "delete":
+		}
+		if arg == "delete" || arg == "-d" {
 			deleteTarget(os.Args[2:])
-		case "start":
+		}
+		if arg == "start" || arg =="-start" {
 			return true
 		}
 		return false
@@ -66,7 +57,32 @@ func printVersion() {
 }
 
 func printHelp() {
-	fmt.Println("Help info")
+	fmt.Println("gorage", version)
+
+	fmt.Println("usage:")
+	fmt.Println("")
+	fmt.Println("     gorage")
+	fmt.Println("")
+
+	fmt.Println("         -l / -list / list")
+	fmt.Println("             list all uploaded items.")
+	fmt.Println("")
+
+	fmt.Println("         -v / -V / -version / version")
+	fmt.Println("             Print softwear version.")
+	fmt.Println("")
+
+	fmt.Println("         -d / delete [target UUID(s)]")
+	fmt.Println("             Delete item with UUIS(s).")
+	fmt.Println("")
+
+	fmt.Println("         -start / start")
+	fmt.Println("             Launch softwear.")
+	fmt.Println("")
+
+	fmt.Println("         -h / -help / help")
+	fmt.Println("             Print this message.")
+	fmt.Println("")
 }
 
 func deleteTarget(target []string) {
