@@ -13,7 +13,6 @@ import (
 
 const (
 	version = "0.1"
-	buildVersion = "102"
 )
 
 func main() {
@@ -64,9 +63,6 @@ func printVersion() {
 	c := color.New(color.FgGreen)
 	c.Print("version:")
 	fmt.Println(version)
-
-	c.Print("build:")
-	fmt.Println(buildVersion)
 }
 
 func printHelp() {
