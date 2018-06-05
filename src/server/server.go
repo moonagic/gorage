@@ -61,6 +61,8 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 		fmt.Sprintf("%d", int(time.Now().Month())) +
 		"/" +
 		fmt.Sprintf("%d", int(time.Now().Day())) +
+		"/" +
+		utils.GetRandomString(16) +
 		"/"
 
 	if err := utils.CheckoutDir(config.GetStorageDir() + fileDir); err != nil {
@@ -68,6 +70,7 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	filePath := config.GetStorageDir() + fileDir + header.Filename // 文件保存path
+
 	gotFile, err := os.Create(filePath)
 	if err != nil {
 		log.Printf("Create failed: %s\n", err)
@@ -133,6 +136,9 @@ func deleteHandle(w http.ResponseWriter, r *http.Request)  {
 					valueMap := f.(map[string]interface{})
 					fileDir := valueMap["Directory"].(string)
 					fileName := valueMap["FileName"].(string)
+					if !utils.CheckoutIfFileExists(fileDir + fileName) {
+						log.Println("File not found, file:", fileDir + fileName)
+					}
 					if err := os.Remove(fileDir + fileName); err != nil {
 						log.Println("Remove file faild, file:", fileDir + fileName)
 					}
