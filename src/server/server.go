@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"github.com/syndtr/goleveldb/leveldb"
 	"io/ioutil"
+	"strconv"
 )
 
 func StartServer(address string, port string) error {
@@ -87,12 +88,15 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	thisTime := time.Now()
 	itemUUID := uuid.Must(uuid.NewV4()).String()
 	// 记录上传数据
 	item := data.UploadItem{
 		UUID: itemUUID,
 		FileName: header.Filename,
 		Directory: fileDir,
+		TagTime: strconv.FormatInt(thisTime.UnixNano()/1e6,10),
+		UploadTime: thisTime.Format("2006-01-02 15:04:05"),
 	}
 	mData, err := json.Marshal(item)
 	if err != nil{

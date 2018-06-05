@@ -16,10 +16,12 @@ const (
 )
 
 func main() {
+
 	if err := config.LoadConfig(); err != "" {
 		log.Fatal(err)
 		os.Exit(0)
 	}
+	config.LoadKeyCache()
 	if parseArgs() {
 		log.Fatal(server.StartServer(config.GetHost(), config.GetPort()))
 	}
@@ -138,6 +140,8 @@ func printItemsList() {
 			color.White("FileName:%s", bodyMap["FileName"].(string))
 			color.White("Directory:%s", bodyMap["Directory"].(string))
 			color.White("URL:%s", config.GetURL() + "content/" + bodyMap["Directory"].(string) + bodyMap["FileName"].(string))
+			color.White("UploadTime:%s", bodyMap["UploadTime"].(string))
+			color.White("TagTime:%s", bodyMap["TagTime"].(string))
 
 			color.Blue("--------------------")
 		}

@@ -5,11 +5,28 @@ import (
 	"io/ioutil"
 	"runtime"
 	"strings"
+	"gorage/src/data"
+	"github.com/syndtr/goleveldb/leveldb"
+	"github.com/fatih/color"
+	"sort"
+	"strconv"
+	"log"
 )
 
 var (
 	config map[string]string
+	KeyCacheArray keyCache
 )
+
+type keyCache []data.KeyMap
+
+func (k keyCache) Len() int { return len(k) }
+func (k keyCache) Less(i, j int) bool {
+	int640, _ := strconv.ParseInt(k[i].TagTime, 10, 64)
+	int641, _ := strconv.ParseInt(k[j].TagTime, 10, 64)
+	return  int640 < int641
+}
+func (k keyCache) Swap(i, j int) { k[i], k[j] = k[j], k[i] }
 
 // LoadConfig read config file
 func LoadConfig() string {
@@ -57,6 +74,41 @@ func LoadConfig() string {
 		return "Broken config."
 	}
 	return "Can not find config file...in \"" + configFile + "\""
+}
+
+// LoadKeyCache
+func LoadKeyCache() {
+	if db, err := leveldb.OpenFile(GetDataBase(), nil); err == nil {
+		item := db.NewIterator(nil, nil)
+		for item.Next() {
+			value := item.Value()
+			var f interface{}
+			json.Unmarshal(value, &f)
+			bodyMap := f.(map[string]interface{})
+			keyModel := data.KeyMap{
+				UUID: bodyMap["UUID"].(string),
+				TagTime: bodyMap["TagTime"].(string),
+			}
+			KeyCacheArray = append(KeyCacheArray, keyModel)
+		}
+		item.Release()
+		err = item.Error()
+		if err != nil {
+			color.Red("Parse error")
+		}
+		defer db.Close()
+	}
+	log.Println("排序前")
+	for i := 0; i < len(KeyCacheArray);i++ {
+		log.Println(KeyCacheArray[i].TagTime)
+	}
+	sort.Sort(KeyCacheArray)
+
+
+	log.Println("排序后")
+	for i := 0; i < len(KeyCacheArray);i++ {
+		log.Println(KeyCacheArray[i].TagTime)
+	}
 }
 
 // GetURL
