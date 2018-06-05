@@ -16,6 +16,7 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 	"io/ioutil"
 	"strconv"
+	"github.com/fatih/color"
 )
 
 func StartServer(address string, port string) error {
@@ -145,6 +146,11 @@ func deleteHandle(w http.ResponseWriter, r *http.Request)  {
 					}
 					if err := os.Remove(fileDir + fileName); err != nil {
 						log.Println("Remove file faild, file:", fileDir + fileName)
+					}
+					if err := os.Remove(fileDir); err != nil {
+						log.Println("Remove directory")
+					} else {
+						color.Red("Error in remove directory: %s", fileDir)
 					}
 				} else {
 					log.Println("Not found value by key")
