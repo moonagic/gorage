@@ -87,7 +87,6 @@ func LoadKeyCache() {
 			keyModel := data.KeyMap{
 				UUID: bodyMap["UUID"].(string),
 				TagTime: bodyMap["TagTime"].(string),
-				Index: len(KeyCacheArray),
 			}
 			KeyCacheArray = append(KeyCacheArray, keyModel)
 		}
@@ -99,6 +98,10 @@ func LoadKeyCache() {
 		defer db.Close()
 	}
 	sort.Sort(KeyCacheArray)
+
+	for i := 0; i < len(KeyCacheArray); i++ {
+		KeyCacheArray[i].Index = i
+	}
 }
 
 // GetURL
