@@ -23,6 +23,8 @@ func StartServer(address string, port string) error {
 	http.HandleFunc("/", index)
 	http.HandleFunc("/upload", uploadHandle)
 	http.HandleFunc("/delete", deleteHandle)
+	http.HandleFunc("/list", listHandle)
+	http.HandleFunc("/item", itemHandle)
 
 	fs := http.FileServer(http.Dir(config.GetStorageDir()))
 	http.Handle("/images/", http.StripPrefix("/images", fs))
@@ -34,6 +36,41 @@ func index(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "{\"code\": 200, \"msg\": \"Service running...\"}")
 	} else {
 		fmt.Fprintf(w, "{\"code\": 404, \"error\": \"404 Not Found.\"}")
+	}
+}
+
+func itemHandle(w http.ResponseWriter, r *http.Request) {
+	if !strings.EqualFold(r.Method, "get") {
+		fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Error Method.\"}")
+		return
+	}
+	r.ParseForm()
+	UUID := r.Form["UUID"][0]
+
+	if db, err := leveldb.OpenFile(config.GetDataBase(), nil); err == nil {
+		if value, err := db.Get([]byte(UUID), nil); err == nil {
+			fmt.Fprintf(w, "{\"code\": 200, \"data\": %s}", value)
+		}
+	} else {
+		fmt.Fprintf(w, "{\"code\": 200, \"error\": \"System exception.\"}")
+	}
+}
+
+func listHandle(w http.ResponseWriter, r *http.Request) {
+	if !strings.EqualFold(r.Method, "get") {
+		fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Error Method.\"}")
+		return
+	}
+	r.ParseForm()
+	if page, err := strconv.Atoi(string(r.Form["page"][0])); err == nil {
+		start := (page - 1) * 10
+		end := page * 10
+		keys := utils.GetListWithStartAndEnd(start, end)
+
+		str, _ := json.Marshal(keys)
+		fmt.Fprintf(w, "{\"code\": 200, \"data\": %s}", string(str))
+	} else {
+		fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Error parm.\"}")
 	}
 }
 
@@ -134,7 +171,6 @@ func deleteHandle(w http.ResponseWriter, r *http.Request)  {
 				// get value of the key
 				value, err := db.Get([]byte(key), nil)
 				if err == nil {
-					log.Println(string(value))
 					// delete file
 					var f interface{}
 					json.Unmarshal(value, &f)
