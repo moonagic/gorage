@@ -9,6 +9,8 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 	"encoding/json"
 	"github.com/fatih/color"
+	"strconv"
+	"gorage/src/utils"
 )
 
 const (
@@ -38,7 +40,15 @@ func parseArgs() bool {
 			printVersion()
 		}
 		if arg == "-l" || arg == "list" || arg == "-list" {
-			printItemsList()
+			if len(os.Args) > 2 {
+				if page, err := strconv.Atoi(os.Args[2]); err == nil {
+					printItemsListWithPage(page)
+				} else {
+					return false
+				}
+			} else {
+				printItemsList()
+			}
 		}
 		if arg == "delete" || arg == "-d" {
 			deleteTarget(os.Args[2:])
@@ -66,7 +76,7 @@ func printHelp() {
 	fmt.Println("     gorage")
 	fmt.Println("")
 
-	fmt.Println("         -l / -list / list")
+	fmt.Println("         -l / -list / list [page(option)]")
 	fmt.Println("             list all uploaded items.")
 	fmt.Println("")
 
@@ -130,31 +140,43 @@ func deleteTarget(target []string) {
 	}
 }
 
-func printItemsList() {
+func printItemsListWithPage(page int)  {
+	start := (page - 1) * 10
+	end := page * 10
+	keys := utils.GetListWithStartAndEnd(start, end)
 	if db, err := leveldb.OpenFile(config.GetDataBase(), nil); err != nil {
 		color.Red("Error in Open Database.")
 	} else {
-		item := db.NewIterator(nil, nil)
 		color.Blue("--------------------")
-		for item.Next() {
-			value := item.Value()
-			var f interface{}
-			json.Unmarshal(value, &f)
-			bodyMap := f.(map[string]interface{})
-			color.Green("UUID:%s", bodyMap["UUID"].(string))
-			color.White("FileName:%s", bodyMap["FileName"].(string))
-			color.White("Directory:%s", bodyMap["Directory"].(string))
-			color.White("URL:%s", config.GetURL() + "content/" + bodyMap["Directory"].(string) + bodyMap["FileName"].(string))
-			color.White("UploadTime:%s", bodyMap["UploadTime"].(string))
-			color.White("TagTime:%s", bodyMap["TagTime"].(string))
-
-			color.Blue("--------------------")
-		}
-		item.Release()
-		err = item.Error()
-		if err != nil {
-			color.Red("Parse error")
+		for i := 0; i < len(keys); i++ {
+			if value, err := db.Get([]byte(keys[i].UUID), nil); err == nil {
+				color.Green("Index:%d", keys[i].Index)
+				showItemValue(value)
+				color.Blue("--------------------")
+			} else {
+				// get error
+				color.Red("Error in get value with key.")
+			}
 		}
 		defer db.Close()
 	}
+}
+
+func printItemsList() {
+	printItemsListWithPage(1)
+	if len(config.KeyCacheArray) > 10 {
+		color.Green("Too much data, only the top 10 data is displayed. You can use pagination queries.")
+	}
+}
+
+func showItemValue(value []byte) {
+	var f interface{}
+	json.Unmarshal(value, &f)
+	bodyMap := f.(map[string]interface{})
+	color.Green("UUID:%s", bodyMap["UUID"].(string))
+	color.White("FileName:%s", bodyMap["FileName"].(string))
+	color.White("Directory:%s", bodyMap["Directory"].(string))
+	color.White("URL:%s", config.GetURL() + "content/" + bodyMap["Directory"].(string) + bodyMap["FileName"].(string))
+	color.White("UploadTime:%s", bodyMap["UploadTime"].(string))
+	color.White("TagTime:%s", bodyMap["TagTime"].(string))
 }

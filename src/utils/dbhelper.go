@@ -1,17 +1,20 @@
 package utils
 
 import (
-	"github.com/syndtr/goleveldb/leveldb"
-	"log"
+	"gorage/src/config"
+	"gorage/src/data"
 )
 
-// PrintAllKeysInDB
-func PrintAllKeysInDB(db *leveldb.DB)  {
-	log.Println("-----------------------")
-	item := db.NewIterator(nil, nil)
-	for item.Next() {
-		key := item.Key()
-		log.Println(string(key))
+func GetListWithStartAndEnd(start int, end int) []data.KeyMap {
+	var UUIDArray []data.KeyMap
+	if start > len(config.KeyCacheArray) - 1 || start >= end || start < 0 {
+		return UUIDArray
 	}
-	log.Println("-----------------------")
+	if end > len(config.KeyCacheArray) - 1 {
+		end = len(config.KeyCacheArray) - 1
+	}
+	for i := start; i < end; i++ {
+		UUIDArray = append(UUIDArray, config.KeyCacheArray[i])
+	}
+	return UUIDArray
 }

@@ -10,6 +10,7 @@ type UploadItem struct {
 }
 
 type KeyMap struct {
+	Index int
 	UUID string
 	TagTime string
 }

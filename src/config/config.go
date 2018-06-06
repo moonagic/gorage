@@ -87,6 +87,7 @@ func LoadKeyCache() {
 			keyModel := data.KeyMap{
 				UUID: bodyMap["UUID"].(string),
 				TagTime: bodyMap["TagTime"].(string),
+				Index: len(KeyCacheArray),
 			}
 			KeyCacheArray = append(KeyCacheArray, keyModel)
 		}
