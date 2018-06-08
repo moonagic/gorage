@@ -57,9 +57,8 @@ func parseArgs() bool {
 			return true
 		}
 		return false
-	} else {
-		return true
 	}
+	return true
 }
 
 func printVersion() {
@@ -140,7 +139,7 @@ func deleteTarget(target []string) {
 	}
 }
 
-func printItemsListWithPage(page int)  {
+func printItemsListWithPage(page int) {
 	start := (page - 1) * 10
 	end := page * 10
 	keys := utils.GetListWithStartAndEnd(start, end)
