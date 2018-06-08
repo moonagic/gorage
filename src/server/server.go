@@ -147,6 +147,9 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 		log.Println("Open Database faild.")
 	} else {
 		err = db.Put([]byte(itemUUID), mData, nil)
+		if err != nil {
+			log.Println("Save database faild.", err)
+		}
 		defer db.Close()
 	}
 

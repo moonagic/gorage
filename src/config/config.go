@@ -14,7 +14,8 @@ import (
 )
 
 var (
-	config        map[string]string
+	config map[string]string
+	// KeyCacheArray KeyCache to index database
 	KeyCacheArray keyCache
 )
 
@@ -76,7 +77,7 @@ func LoadConfig() string {
 	return "Can not find config file...in \"" + configFile + "\""
 }
 
-// LoadKeyCache
+// LoadKeyCache load the keycache
 func LoadKeyCache() {
 	if db, err := leveldb.OpenFile(GetDataBase(), nil); err == nil {
 		item := db.NewIterator(nil, nil)
@@ -105,32 +106,32 @@ func LoadKeyCache() {
 	}
 }
 
-// GetURL
+// GetURL ...
 func GetURL() string {
 	return config["url"]
 }
 
-// GetHost
+// GetHost ...
 func GetHost() string {
 	return config["host"]
 }
 
-// GetPort
+// GetPort ...
 func GetPort() string {
 	return config["port"]
 }
 
-// GetTypes
+// GetTypes ...
 func GetTypes() string {
 	return config["fileType"]
 }
 
-// GetStorageDir
+// GetStorageDir ...
 func GetStorageDir() string {
 	return config["storageDir"]
 }
 
-// GetDataBase
+// GetDataBase ...
 func GetDataBase() string {
 	return config["localDatabase"]
 }

@@ -34,27 +34,25 @@ func main() {
 func parseArgs() bool {
 	if len(os.Args) > 1 {
 		arg := os.Args[1]
-		if arg == "help" || arg == "-h" || arg == "-help" {
+		if arg == "-h" || arg == "-help" {
 			printHelp()
 		}
-		if arg == "-v" || arg == "-V" || arg == "-version" || arg == "version" {
+		if arg == "-v" || arg == "-version" {
 			printVersion()
 		}
-		if arg == "-l" || arg == "list" || arg == "-list" {
+		if arg == "-l" || arg == "-list" {
 			if len(os.Args) > 2 {
 				if page, err := strconv.Atoi(os.Args[2]); err == nil {
 					printItemsListWithPage(page)
-				} else {
-					return false
 				}
-			} else {
-				printItemsList()
+				return false
 			}
+			printItemsList()
 		}
-		if arg == "delete" || arg == "-d" {
+		if arg == "-d" {
 			deleteTarget(os.Args[2:])
 		}
-		if arg == "start" || arg == "-start" {
+		if arg == "-start" {
 			return true
 		}
 		return false
@@ -76,23 +74,23 @@ func printHelp() {
 	fmt.Println("     gorage")
 	fmt.Println("")
 
-	fmt.Println("         -l / -list / list [page(option)]")
+	fmt.Println("         -l / -list  [page(option)]")
 	fmt.Println("             list all uploaded items.")
 	fmt.Println("")
 
-	fmt.Println("         -v / -V / -version / version")
+	fmt.Println("         -v / -version")
 	fmt.Println("             Print softwear version.")
 	fmt.Println("")
 
-	fmt.Println("         -d / delete [target UUID(s)]")
+	fmt.Println("         -d [target UUID(s)]")
 	fmt.Println("             Delete item with UUIS(s).")
 	fmt.Println("")
 
-	fmt.Println("         -start / start")
+	fmt.Println("         -start")
 	fmt.Println("             Launch softwear.")
 	fmt.Println("")
 
-	fmt.Println("         -h / -help / help")
+	fmt.Println("         -h / -help")
 	fmt.Println("             Print this message.")
 	fmt.Println("")
 }
