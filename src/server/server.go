@@ -20,6 +20,7 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
+// StartServer start service
 func StartServer(address string, port string) error {
 	http.HandleFunc("/", index)
 	http.HandleFunc("/upload", uploadHandle)
