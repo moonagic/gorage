@@ -32,3 +32,9 @@ database
 
 # binary file
 gorage
+
+# debug
+*debug
+
+# vscode
+.vscode
