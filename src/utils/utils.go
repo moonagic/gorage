@@ -1,14 +1,14 @@
 package utils
 
 import (
-	"os"
-	"fmt"
 	"errors"
+	"fmt"
 	"math/rand"
+	"os"
 	"time"
 )
 
-// Checkout directory status
+// CheckoutDir Checkout directory status
 // if not exists, try to create it
 func CheckoutDir(dir string) error {
 	if _, err := os.Stat(dir); err != nil {
@@ -23,7 +23,7 @@ func CheckoutDir(dir string) error {
 	return nil
 }
 
-// CheckoutIfFileExists
+// CheckoutIfFileExists checkout if file exists
 func CheckoutIfFileExists(filePath string) bool {
 	if _, err := os.Stat(filePath); err != nil {
 		return false
@@ -31,7 +31,8 @@ func CheckoutIfFileExists(filePath string) bool {
 	return true
 }
 
-func GetRandomString(count int) string{
+// GetRandomString generate random string with length
+func GetRandomString(count int) string {
 	str := "0123456789abcdefghijklmnopqrstuvwxyz"
 	bytes := []byte(str)
 	result := []byte("")

@@ -1,16 +1,17 @@
 package main
 
 import (
-	"os"
-	"log"
-	"gorage/src/server"
-	"gorage/src/config"
-	"fmt"
-	"github.com/syndtr/goleveldb/leveldb"
 	"encoding/json"
-	"github.com/fatih/color"
-	"strconv"
+	"fmt"
+	"gorage/src/config"
+	"gorage/src/server"
 	"gorage/src/utils"
+	"log"
+	"os"
+	"strconv"
+
+	"github.com/fatih/color"
+	"github.com/syndtr/goleveldb/leveldb"
 )
 
 const (
@@ -53,7 +54,7 @@ func parseArgs() bool {
 		if arg == "delete" || arg == "-d" {
 			deleteTarget(os.Args[2:])
 		}
-		if arg == "start" || arg =="-start" {
+		if arg == "start" || arg == "-start" {
 			return true
 		}
 		return false
@@ -111,18 +112,18 @@ func deleteTarget(target []string) {
 				fileDir := valueMap["Directory"].(string)
 				fileName := valueMap["FileName"].(string)
 				if err := os.Remove(config.GetStorageDir() + fileDir + fileName); err != nil {
-					color.Red("Error in remove file: %s", config.GetStorageDir() + fileDir + fileName)
-					log.Println("file:", fileDir + fileName)
+					color.Red("Error in remove file: %s", config.GetStorageDir()+fileDir+fileName)
+					log.Println("file:", fileDir+fileName)
 					log.Println("key:", key)
 				} else {
 					log.Println("Remove file finished.")
-					log.Println("file:", fileDir + fileName)
+					log.Println("file:", fileDir+fileName)
 					log.Println("key:", key)
 				}
 				if err := os.Remove(config.GetStorageDir() + fileDir); err != nil {
 					log.Println("Remove directory")
 				} else {
-					color.Red("Error in remove directory: %s", config.GetStorageDir() + fileDir)
+					color.Red("Error in remove directory: %s", config.GetStorageDir()+fileDir)
 				}
 
 				// delete data
@@ -175,7 +176,7 @@ func showItemValue(value []byte) {
 	color.Green("UUID:%s", bodyMap["UUID"].(string))
 	color.White("FileName:%s", bodyMap["FileName"].(string))
 	color.White("Directory:%s", bodyMap["Directory"].(string))
-	color.White("URL:%s", config.GetURL() + "content/" + bodyMap["Directory"].(string) + bodyMap["FileName"].(string))
+	color.White("URL:%s", config.GetURL()+"content/"+bodyMap["Directory"].(string)+bodyMap["FileName"].(string))
 	color.White("UploadTime:%s", bodyMap["UploadTime"].(string))
 	color.White("TagTime:%s", bodyMap["TagTime"].(string))
 }

@@ -2,18 +2,19 @@ package config
 
 import (
 	"encoding/json"
+	"gorage/src/data"
 	"io/ioutil"
 	"runtime"
-	"strings"
-	"gorage/src/data"
-	"github.com/syndtr/goleveldb/leveldb"
-	"github.com/fatih/color"
 	"sort"
 	"strconv"
+	"strings"
+
+	"github.com/fatih/color"
+	"github.com/syndtr/goleveldb/leveldb"
 )
 
 var (
-	config map[string]string
+	config        map[string]string
 	KeyCacheArray keyCache
 )
 
@@ -23,7 +24,7 @@ func (k keyCache) Len() int { return len(k) }
 func (k keyCache) Less(i, j int) bool {
 	int640, _ := strconv.ParseInt(k[i].TagTime, 10, 64)
 	int641, _ := strconv.ParseInt(k[j].TagTime, 10, 64)
-	return  int640 < int641
+	return int640 < int641
 }
 func (k keyCache) Swap(i, j int) { k[i], k[j] = k[j], k[i] }
 
@@ -38,7 +39,7 @@ func LoadConfig() string {
 		configFile = "/etc/gorage/config"
 		break
 	case "windows":
-		configFile = "config-windows"
+		configFile = "../config-windows"
 		break
 	}
 
@@ -85,7 +86,7 @@ func LoadKeyCache() {
 			json.Unmarshal(value, &f)
 			bodyMap := f.(map[string]interface{})
 			keyModel := data.KeyMap{
-				UUID: bodyMap["UUID"].(string),
+				UUID:    bodyMap["UUID"].(string),
 				TagTime: bodyMap["TagTime"].(string),
 			}
 			KeyCacheArray = append(KeyCacheArray, keyModel)
@@ -108,6 +109,7 @@ func LoadKeyCache() {
 func GetURL() string {
 	return config["url"]
 }
+
 // GetHost
 func GetHost() string {
 	return config["host"]

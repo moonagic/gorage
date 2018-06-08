@@ -1,22 +1,23 @@
 package server
 
 import (
-	"net/http"
-	"log"
-	"fmt"
-	"os"
-	"io"
-	"gorage/src/utils"
-	"strings"
-	"github.com/satori/go.uuid"
-	"gorage/src/config"
-	"time"
-	"gorage/src/data"
 	"encoding/json"
-	"github.com/syndtr/goleveldb/leveldb"
+	"fmt"
+	"gorage/src/config"
+	"gorage/src/data"
+	"gorage/src/utils"
+	"io"
 	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
 	"strconv"
+	"strings"
+	"time"
+
 	"github.com/fatih/color"
+	"github.com/satori/go.uuid"
+	"github.com/syndtr/goleveldb/leveldb"
 )
 
 func StartServer(address string, port string) error {
@@ -28,7 +29,7 @@ func StartServer(address string, port string) error {
 
 	fs := http.FileServer(http.Dir(config.GetStorageDir()))
 	http.Handle("/images/", http.StripPrefix("/images", fs))
-	return http.ListenAndServe(address + ":" + port, nil)
+	return http.ListenAndServe(address+":"+port, nil)
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
@@ -130,14 +131,14 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 	itemUUID := uuid.Must(uuid.NewV4()).String()
 	// 记录上传数据
 	item := data.UploadItem{
-		UUID: itemUUID,
-		FileName: header.Filename,
-		Directory: fileDir,
-		TagTime: strconv.FormatInt(thisTime.UnixNano()/1e6,10),
+		UUID:       itemUUID,
+		FileName:   header.Filename,
+		Directory:  fileDir,
+		TagTime:    strconv.FormatInt(thisTime.UnixNano()/1e6, 10),
 		UploadTime: thisTime.Format("2006-01-02 15:04:05"),
 	}
 	mData, err := json.Marshal(item)
-	if err != nil{
+	if err != nil {
 		log.Fatalln(err)
 	}
 
@@ -149,11 +150,11 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	url := config.GetURL() + "content/" + fileDir + header.Filename
-	url = strings.Replace(url, "//","/", -1)
+	url = strings.Replace(url, "//", "/", -1)
 	fmt.Fprintf(w, "{\"code\": 200, \"msg\": \"Upload finished.\", \"data\":%s, \"url\":\"%s\"}", string(mData), url)
 }
 
-func deleteHandle(w http.ResponseWriter, r *http.Request)  {
+func deleteHandle(w http.ResponseWriter, r *http.Request) {
 	if !strings.EqualFold(r.Method, "delete") {
 		fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Error Method.\"}")
 		return
@@ -178,10 +179,10 @@ func deleteHandle(w http.ResponseWriter, r *http.Request)  {
 					fileDir := valueMap["Directory"].(string)
 					fileName := valueMap["FileName"].(string)
 					if !utils.CheckoutIfFileExists(fileDir + fileName) {
-						log.Println("File not found, file:", fileDir + fileName)
+						log.Println("File not found, file:", fileDir+fileName)
 					}
 					if err := os.Remove(fileDir + fileName); err != nil {
-						log.Println("Remove file faild, file:", fileDir + fileName)
+						log.Println("Remove file faild, file:", fileDir+fileName)
 					}
 					if err := os.Remove(fileDir); err != nil {
 						log.Println("Remove directory")
