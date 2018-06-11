@@ -34,7 +34,7 @@ func LoadConfig() string {
 	var configFile string
 	switch runtime.GOOS {
 	case "darwin":
-		configFile = "./config-macintosh"
+		configFile = "../config-macintosh"
 		break
 	case "linux":
 		configFile = "/etc/gorage/config"
