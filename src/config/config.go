@@ -106,6 +106,11 @@ func LoadKeyCache() {
 	}
 }
 
+// AddKeyCache add key cache to array
+func AddKeyCache(key data.KeyMap) {
+	KeyCacheArray = append(KeyCacheArray, key)
+}
+
 // GetURL ...
 func GetURL() string {
 	return config["url"]

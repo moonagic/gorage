@@ -156,6 +156,14 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 	url := config.GetURL() + "content/" + fileDir + header.Filename
 	url = strings.Replace(url, "//", "/", -1)
 	fmt.Fprintf(w, "{\"code\": 200, \"msg\": \"Upload finished.\", \"data\":%s, \"url\":\"%s\"}", string(mData), url)
+
+	// add to keys cache
+	keyModel := data.KeyMap{
+		UUID:    item.UUID,
+		TagTime: item.TagTime,
+		Index:   len(config.KeyCacheArray),
+	}
+	config.AddKeyCache(keyModel)
 }
 
 func deleteHandle(w http.ResponseWriter, r *http.Request) {
