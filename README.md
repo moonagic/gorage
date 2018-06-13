@@ -3,7 +3,7 @@ An image hosting tool written by go.
 [![Go Report Card](https://goreportcard.com/badge/github.com/moonagic/gorage)](https://goreportcard.com/report/github.com/moonagic/gorage)
 
 ## How To Get Started
-* [Download the release](https://github.com/moonagic/gorage/releases). for example `/usr/local/bin/gorage`
+* [Download the release](https://github.com/moonagic/gorage/releases) and mv to somewhere, for example `/usr/local/bin/gorage`
 * Create a config file in `/etc/gorage/config`
 for example:
 ```
