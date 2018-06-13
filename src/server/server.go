@@ -216,7 +216,7 @@ func deleteHandle(w http.ResponseWriter, r *http.Request) {
 					defer db.Close()
 					return
 				}
-				fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Delete finished.\"}")
+				fmt.Fprintf(w, "{\"code\": 200, \"msg\": \"Delete finished.\"}")
 			}
 		}
 		defer db.Close()
