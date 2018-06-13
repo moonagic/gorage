@@ -25,3 +25,21 @@ Then just run `gorage start`
 * Delete uploaded project
 <img src="https://github.com/moonagic/gorage/blob/master/images/delete.png" width="600">
 
+## Usage
+* Upload file
+For example:
+```bash
+curl -F "file=@example.png" https://example.com/upload
+```
+
+* List all uploaded project
+For example:
+```bash
+curl -X get http://127.0.0.1:9909/list?page=1
+```
+
+* Delete uploaded project
+For example:
+```bash
+curl -X delete http://127.0.0.1:9909/delete -d '{"key":"572ccde8-a42c-4c28-9260-7e030d4fb8e5"}'
+```
