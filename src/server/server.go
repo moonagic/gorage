@@ -120,7 +120,6 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 	}
 	defer gotFile.Close()
 
-	// 读取表单文件，写入保存文件
 	_, err = io.Copy(gotFile, formFile)
 	if err != nil {
 		log.Printf("Write file failed: %s\n", err)
@@ -130,7 +129,7 @@ func uploadHandle(w http.ResponseWriter, r *http.Request) {
 
 	thisTime := time.Now()
 	itemUUID := uuid.Must(uuid.NewV4()).String()
-	// 记录上传数据
+	// make save sata
 	item := data.UploadItem{
 		UUID:       itemUUID,
 		FileName:   header.Filename,

@@ -163,7 +163,7 @@ func printItemsListWithPage(page int) {
 func printItemsList() {
 	printItemsListWithPage(1)
 	if len(config.KeyCacheArray) > 10 {
-		color.Green("Too much data, only the top 10 data is displayed. You can use pagination queries.")
+		color.Green("Too many data, only the top 10 datas displayed. You can use pagination queries.")
 	}
 }
 
