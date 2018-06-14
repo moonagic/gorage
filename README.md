@@ -28,7 +28,7 @@ Then just run `gorage start`
 ## Usage
 * Upload file  
 ```bash
-curl -F "file=@example.png" https://example.com/upload
+curl -F "file=@example.png" http://127.0.0.1:9909/upload
 {"code": 200, "msg": "Upload finished.", "data":{"UUID":"09c742d7-a8b4-4923-ace7-199aa0e2d169","FileName":"gorage.zip","Directory":"2018/6/13/wfxyoyyxqu43bap7/","TagTime":"1528882517983","UploadTime":"2018-06-13 17:35:17"}, "url":"http://example.com/content/2018/6/13/wfxyoyyxqu43bap7/gorage.zip"}
 ```
 
