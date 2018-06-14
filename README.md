@@ -20,10 +20,10 @@ Then just run `gorage start`
 
 ## Command line
 * List all uploaded project
-<img src="https://github.com/moonagic/gorage/blob/master/images/list.png" width="800">
+<img src="https://github.com/moonagic/gorage/blob/master/images/list.png">
 
 * Delete uploaded project
-<img src="https://github.com/moonagic/gorage/blob/master/images/delete.png" width="800">
+<img src="https://github.com/moonagic/gorage/blob/master/images/delete.png">
 
 ## Usage
 * Upload file  
