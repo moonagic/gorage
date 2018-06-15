@@ -16,7 +16,7 @@ for example:
   "db": "/etc/gorage/.database"
 }
 ```
-Then just run `gorage start`
+Then just run `gorage -start`
 
 ## Command line
 * List all uploaded project
