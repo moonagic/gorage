@@ -175,6 +175,7 @@ func deleteHandle(w http.ResponseWriter, r *http.Request) {
 		log.Println("Open Database faild.")
 		log.Println(err)
 	} else {
+		defer db.Close()
 		if bodyContent, err := ioutil.ReadAll(r.Body); err == nil {
 			var f interface{}
 			json.Unmarshal(bodyContent, &f)
@@ -203,7 +204,6 @@ func deleteHandle(w http.ResponseWriter, r *http.Request) {
 				} else {
 					log.Println("Not found value by key")
 					fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Not found value by key.\"}")
-					defer db.Close()
 					return
 				}
 
@@ -213,12 +213,10 @@ func deleteHandle(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					log.Println(err)
 					fmt.Fprintf(w, "{\"code\": 200, \"error\": \"Delete value faild in database.\"}")
-					defer db.Close()
 					return
 				}
 				fmt.Fprintf(w, "{\"code\": 200, \"msg\": \"Delete finished.\"}")
 			}
 		}
-		defer db.Close()
 	}
 }
