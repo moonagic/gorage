@@ -34,13 +34,12 @@ func main() {
 func parseArgs() bool {
 	if len(os.Args) > 1 {
 		arg := os.Args[1]
-		if arg == "-h" || arg == "-help" {
+		switch arg {
+		case "-h", "-help":
 			printHelp()
-		}
-		if arg == "-v" || arg == "-version" {
+		case "-v", "-version":
 			printVersion()
-		}
-		if arg == "-l" || arg == "-list" {
+		case "-l", "-list":
 			if len(os.Args) > 2 {
 				if page, err := strconv.Atoi(os.Args[2]); err == nil {
 					printItemsListWithPage(page)
@@ -48,11 +47,9 @@ func parseArgs() bool {
 				return false
 			}
 			printItemsList()
-		}
-		if arg == "-d" {
+		case "-d":
 			deleteTarget(os.Args[2:])
-		}
-		if arg == "-start" {
+		case "-start":
 			return true
 		}
 		return false
