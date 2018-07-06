@@ -116,9 +116,9 @@ func deleteTarget(target []string) {
 					log.Println("key:", key)
 				}
 				if err := os.Remove(config.GetStorageDir() + fileDir); err != nil {
-					log.Println("Remove directory")
-				} else {
 					color.Red("Error in remove directory: %s", config.GetStorageDir()+fileDir)
+				} else {
+					log.Println("Remove directory")
 				}
 
 				// delete data
