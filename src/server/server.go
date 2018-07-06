@@ -190,16 +190,16 @@ func deleteHandle(w http.ResponseWriter, r *http.Request) {
 					valueMap := f.(map[string]interface{})
 					fileDir := valueMap["Directory"].(string)
 					fileName := valueMap["FileName"].(string)
-					if !utils.CheckoutIfFileExists(fileDir + fileName) {
+					if !utils.CheckoutIfFileExists(config.GetStorageDir() + fileDir + fileName) {
 						log.Println("File not found, file:", fileDir+fileName)
 					}
-					if err := os.Remove(fileDir + fileName); err != nil {
+					if err := os.Remove(config.GetStorageDir() + fileDir + fileName); err != nil {
 						log.Println("Remove file faild, file:", fileDir+fileName)
 					}
-					if err := os.Remove(fileDir); err != nil {
-						log.Println("Remove directory")
-					} else {
+					if err := os.Remove(config.GetStorageDir() + fileDir); err != nil {
 						color.Red("Error in remove directory: %s", fileDir)
+					} else {
+						log.Println("Remove directory")
 					}
 				} else {
 					log.Println("Not found value by key")
