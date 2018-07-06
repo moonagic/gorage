@@ -1,1 +1,2 @@
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o gorage src/main.go
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o gorage-linux-amd64 src/main.go
+tar cfJ gorage-linux-amd64.tar.xz gorage-linux-amd64
