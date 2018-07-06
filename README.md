@@ -1,5 +1,5 @@
 # gorage
-An image hosting tool written by go.  
+A simple image hosting tool written by go.  
 [![Go Report Card](https://goreportcard.com/badge/github.com/moonagic/gorage)](https://goreportcard.com/report/github.com/moonagic/gorage)
 
 ## How To Get Started
@@ -29,7 +29,7 @@ Then just run `gorage -start`
 * Upload file  
 ```bash
 curl -F "file=@example.png" http://127.0.0.1:9909/upload
-{"code": 200, "msg": "Upload finished.", "data":{"UUID":"09c742d7-a8b4-4923-ace7-199aa0e2d169","FileName":"gorage.zip","Directory":"2018/6/13/wfxyoyyxqu43bap7/","TagTime":"1528882517983","UploadTime":"2018-06-13 17:35:17"}, "url":"http://example.com/content/2018/6/13/wfxyoyyxqu43bap7/gorage.zip"}
+{"code": 200, "msg": "Upload finished.", "data":{"UUID":"09c742d7-a8b4-4923-ace7-199aa0e2d169","FileName":"example.png","Directory":"2018/6/13/wfxyoyyxqu43bap7/","TagTime":"1528882517983","UploadTime":"2018-06-13 17:35:17"}, "url":"http://example.com/content/2018/6/13/wfxyoyyxqu43bap7/example.png"}
 ```
 
 * List all uploaded project  
